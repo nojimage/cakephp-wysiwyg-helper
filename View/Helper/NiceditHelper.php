@@ -46,20 +46,24 @@ class NiceditHelper extends WysiwygAppHelper {
 		$initOptions = json_encode($initOptions);
 		$domId = $this->domId($field);
 
-		$script = "var area1;
-			function makePanel() {
-				area1 = new nicEditor({$initOptions}).panelInstance(
-					'{$domId}',
-					{hasPanel : true}
-				);
-			}
-			bkLib.onDomLoaded(function() { makePanel(); });";
+		$script = "
+// init nicEditor
+var area1;
+function makePanel() {
+	area1 = new nicEditor({$initOptions}).panelInstance(
+		'{$domId}',
+		{hasPanel : true}
+	);
+}
+";
 
 		if (isset($options['bufferScript'])) {
+			$script .= "makePanel();";
 			$this->Js->buffer($script);
 			return '';
 		}
 
+		$script .= "bkLib.onDomLoaded(function() { makePanel(); });";
 		return $this->Html->scriptBlock($script, array('safe' => true));
 	}
 
